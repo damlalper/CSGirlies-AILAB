@@ -1,0 +1,160 @@
+/* CSGirlies Theme - Fun and Colorful UI */
+
+/* Define Color Palette and Fonts */
+:root {
+  --primary: #FF69B4; /* Hot Pink */
+  --secondary: #FFD700; /* Gold */
+  --accent: #00CED1; /* Dark Turquoise */
+  --background: #FFF0F5; /* Lavender Blush */
+  --text-dark: #4A4A4A;
+  --text-light: #FFFFFF;
+  --font-main: 'Outfit', sans-serif;
+}
+
+/* Override Body Styles */
+body {
+  font-family: var(--font-main);
+  background-color: var(--background);
+  /* Simple dot pattern background */
+  background-image: radial-gradient(var(--primary) 2px, transparent 0);
+  background-size: 30px 30px;
+  color: var(--text-dark);
+}
+
+/* Override Header */
+.header {
+  background: var(--text-light);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.header h1 {
+  color: var(--primary);
+  font-weight: 900; /* Extra bold */
+  font-size: 3em;
+}
+
+.header p {
+  color: var(--text-dark);
+  font-size: 1.2em;
+}
+
+/* Override Experiment Selection Screen */
+.experiments-container h2 {
+  color: var(--primary);
+  font-weight: 700;
+  text-shadow: none;
+}
+
+/* Card Redesign */
+.experiment-card {
+  background: var(--text-light);
+  border-radius: 20px;
+  border: 2px solid var(--primary);
+  box-shadow: 5px 5px 0px var(--primary);
+  transition: all 0.3s;
+}
+
+.experiment-card:hover {
+  transform: translate(5px, 5px);
+  box-shadow: 0px 0px 0px var(--primary);
+}
+
+.experiment-card h3 {
+  color: var(--accent);
+}
+
+.experiment-card .subject {
+  color: var(--primary);
+  font-weight: bold;
+}
+
+/* Button Redesign */
+.btn-start, .btn-send {
+  background: var(--secondary);
+  color: var(--text-dark);
+  border-radius: 12px;
+  border: 2px solid var(--text-dark);
+  font-weight: 700;
+  box-shadow: 3px 3px 0px var(--text-dark);
+}
+
+.btn-start:hover, .btn-send:hover:not(:disabled) {
+  transform: translate(3px, 3px);
+  box-shadow: 0px 0px 0px var(--text-dark);
+}
+
+/* Chat Bubble Redesign */
+.message {
+  border-radius: 20px;
+}
+
+.message.user {
+  background: var(--primary);
+  color: var(--text-light);
+  border-bottom-right-radius: 5px;
+}
+
+.message.partner {
+  background: #E0F7FA; /* Light Cyan */
+  color: var(--text-dark);
+  border: none;
+  border-left: 5px solid var(--accent);
+  border-bottom-left-radius: 5px;
+}
+
+.message.mentor {
+  background: #FFF9C4; /* Light Yellow */
+  color: var(--text-dark);
+  border: none;
+  border-left: 5px solid var(--secondary);
+}
+
+/* Input Area Redesign */
+.input-area input {
+  border-radius: 12px;
+  border: 2px solid var(--accent);
+  transition: all 0.3s;
+}
+
+.input-area input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 10px rgba(255, 105, 180, 0.5);
+}
+
+/* Workspace Redesign */
+.experiment-workspace {
+  background: var(--text-light);
+  border-radius: 20px;
+  border: 2px solid var(--accent);
+}
+
+.experiment-header {
+  background: var(--primary);
+  color: var(--text-light);
+  border-top-left-radius: 18px;
+  border-top-right-radius: 18px;
+}
+
+/* Graph/Wolfram Result Styling */
+.message.graph {
+  align-self: center;
+  background: #f0f8ff; /* AliceBlue */
+  border: 2px dashed var(--accent);
+  border-radius: 15px;
+  padding: 15px;
+  width: 90%;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+}
+
+.message.graph strong {
+  color: var(--accent);
+  font-size: 1.1em;
+  text-align: center;
+}
+
+.message.graph img {
+  background: white;
+  border-radius: 10px;
+  padding: 10px;
+  margin-top: 10px;
+}

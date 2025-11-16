@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './App.css';
+import './Theme.css';
 
 function App() {
   const [experiments, setExperiments] = useState([]);
@@ -117,10 +118,22 @@ function App() {
         }
       });
 
-      alert(res.data.message);
+      const gitbookUrl = res.data?.gitbook_response?.gitbook_url;
+
+      if (gitbookUrl) {
+        // If a GitBook URL is returned, confirm with the user to open it
+        if (window.confirm(`Experiment complete! View the full lab report on GitBook?`)) {
+          window.open(gitbookUrl, '_blank');
+        }
+      } else {
+        // Fallback message if no URL is present
+        alert(res.data.message || "Experiment completed successfully!");
+      }
+
       resetApp();
     } catch (error) {
       console.error('Error completing experiment:', error);
+      alert('Could not complete the experiment. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -150,13 +163,13 @@ function App() {
               <div key={exp.id} className="experiment-card">
                 <h3>{exp.title}</h3>
                 <p className="subject">{exp.subject}</p>
-                <p className="duration">⏱️ {exp.duration_minutes} minutes</p>
+                <p className="duration"><i className="fas fa-clock"></i> {exp.duration_minutes} minutes</p>
                 <p className="description">{exp.description}</p>
                 <button 
                   onClick={() => startExperiment(exp.id)}
                   className="btn-start"
                 >
-                  Start
+                  <i className="fas fa-rocket"></i> Start
                 </button>
               </div>
             ))}
@@ -179,7 +192,7 @@ function App() {
               <div className="messages">
                 {messages.map((msg, idx) => (
                   <div key={idx} className={`message ${msg.role}`}>
-                    <strong>{msg.sender}:</strong>
+                    <strong><i className={`fas fa-${msg.role === 'user' ? 'user-astronaut' : 'robot'}`}></i> {msg.sender}:</strong>
                     {msg.image ? (
                       <img src={`data:image/svg+xml;base64,${msg.image}`} alt="Graph" />
                     ) : (
@@ -204,13 +217,13 @@ function App() {
                   disabled={loading}
                   className="btn-send"
                 >
-                  Send
+                  <i className="fas fa-paper-plane"></i> Send
                 </button>
               </div>
             </div>
 
             <div className="sidebar">
-              <h3>Experiment Information</h3>
+              <h3><i className="fas fa-info-circle"></i> Experiment Information</h3>
               <div className="info-box">
                 <h4>Step {currentStep}</h4>
                 <p><strong>Subject:</strong> {selectedExp.subject}</p>
@@ -218,7 +231,7 @@ function App() {
               </div>
 
               <div className="info-box">
-                <h4>Learning Objectives</h4>
+                <h4><i className="fas fa-bullseye"></i> Learning Objectives</h4>
                 <ul>
                   {selectedExp.learning_objectives.slice(0, 3).map((obj, idx) => (
                     <li key={idx}>{obj}</li>
@@ -231,13 +244,13 @@ function App() {
                 className="btn-complete"
                 disabled={loading}
               >
-                Complete Experiment
+                <i className="fas fa-check-circle"></i> Complete Experiment
               </button>
               <button 
                 onClick={resetApp}
                 className="btn-cancel"
               >
-                Change Experiment
+                <i className="fas fa-times-circle"></i> Change Experiment
               </button>
             </div>
           </div>
@@ -245,7 +258,7 @@ function App() {
       )}
 
       <footer className="footer">
-        <p>CSGirlies Team © 2024 - Making Education Accessible</p>
+        <p>CSGirlies Team © 2025 - Making Education Accessible <i className="fas fa-heart" style={{color: 'var(--primary)'}}></i></p>
       </footer>
     </div>
   );

@@ -231,10 +231,12 @@ async def interact_with_experiment(request: StudentInputRequest) -> ExperimentRe
             elif request.experiment_id == "bio_osmosis":
                 wolfram_result = await wolfram_engine.compute_osmosis(0.1, 298, 0.01)
         
-        progress = (request.current_step / len(scenario.steps)) * 100
-        
-        logger.info(f"Session {request.session_id}: Step {request.current_step} completed")
-        
+        # Increment step for next interaction
+        next_step = min(request.current_step + 1, len(scenario.steps))
+        progress = (next_step / len(scenario.steps)) * 100
+
+        logger.info(f"Session {request.session_id}: Step {request.current_step} completed, moving to step {next_step}")
+
         return ExperimentResponse(
             session_id=request.session_id,
             experiment_id=request.experiment_id,
@@ -245,7 +247,7 @@ async def interact_with_experiment(request: StudentInputRequest) -> ExperimentRe
                 "result": wolfram_result.result if wolfram_result else None,
                 "graph_svg": wolfram_result.graph_svg if wolfram_result else None
             } if wolfram_result else None,
-            current_step=request.current_step,
+            current_step=next_step,
             progress=progress
         )
         
@@ -272,9 +274,23 @@ async def complete_experiment(session_id: str, experiment_id: str):
     }
     
     evaluator_message = await evaluator_agent.think(eval_context)
-    
-    # Create GitBook documentation
-    gitbook_response = await gitbook_integration.create_experiment_page(
+
+    # Collect conversation history from agents
+    partner_history = partner_agent.get_history()
+    mentor_history = mentor_agent.get_history()
+
+    # Build full conversation log
+    conversation_history = []
+    for msg in partner_history:
+        conversation_history.append({
+            "role": msg.role,
+            "sender": msg.sender,
+            "content": msg.content
+        })
+
+    # Create comprehensive GitBook lab report with local file
+    gitbook_response = await gitbook_integration.create_experiment_report(
+        session_id=session_id,
         experiment_name=scenario.title,
         scenario_data={
             "description": scenario.description,
@@ -289,25 +305,28 @@ async def complete_experiment(session_id: str, experiment_id: str):
                 for s in scenario.steps
             ]
         },
-        results={
-            "summary": "Experiment completed successfully",
-            "partner_message": "Great work!",
-            "mentor_message": "Well done!",
-            "wolfram_result": "Computation executed",
-            "conclusions": evaluator_message,
-            "timestamp": "2024"
+        conversation_history=conversation_history,
+        observations=partner_agent.experiment_memory if hasattr(partner_agent, 'experiment_memory') else {},
+        wolfram_results=[],  # Could be enhanced to track all Wolfram results
+        evaluation={
+            "feedback": evaluator_message,
+            "status": "completed"
         }
     )
-    
+
     logger.info(f"Completed experiment session: {session_id} - {experiment_id}")
-    
+    logger.info(f"Lab report saved to: {gitbook_response.get('local_file', 'N/A')}")
+    logger.info(f"GitBook status: {gitbook_response}")
+
+
+    # Return the full GitBook response to the frontend
     return {
         "session_id": session_id,
         "experiment_id": experiment_id,
         "status": "completed",
         "evaluator_feedback": evaluator_message,
-        "gitbook_status": gitbook_response.get("success", False),
-        "message": "Experiment completed! Documentation has been generated."
+        "gitbook_response": gitbook_response,
+        "message": gitbook_response.get("message", "Experiment completed.")
     }
 
 

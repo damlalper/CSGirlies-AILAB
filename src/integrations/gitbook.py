@@ -81,22 +81,43 @@ class GitBookIntegration:
             }
 
         try:
-            # Create page in GitBook (would call actual API in production)
+            # API endpoint to create a new page in the root of the space
+            api_url = f"{self.base_url}/spaces/{self.space_id}/content"
+
+            # Create page in GitBook
             page_data = {
-                "title": f"Lab Report: {experiment_name} ({session_id[:8]})",
-                "description": f"Automated lab report generated on {timestamp}",
-                "content": content
+                "title": f"Lab Report: {experiment_name} ({timestamp})",
+                "kind": "document", # Explicitly set the kind to 'document'
+                "content": {
+                    "kind": "markdown",
+                    "value": content
+                }
             }
 
-            # This would call actual GitBook API
+            response = requests.post(api_url, headers=self.headers, json=page_data)
+            response.raise_for_status()  # Raise an exception for bad status codes
+
+            response_data = response.json()
+            
+            # Construct the public URL for the newly created page
+            gitbook_url = f"https://app.gitbook.com/{response_data['spaceId']}/{response_data['path']}"
+
+
             return {
                 "success": True,
-                "message": f"Lab report created for '{experiment_name}'",
-                "page_id": f"mock-{session_id}",
+                "message": f"Lab report for '{experiment_name}' created and published to GitBook.",
+                "page_id": response_data.get('uid'),
                 "local_file": str(report_path),
-                "gitbook_url": f"https://gitbook.com/docs/{session_id}"
+                "gitbook_url": gitbook_url,
             }
 
+        except requests.exceptions.RequestException as e:
+            return {
+                "success": False,
+                "error": f"GitBook API Error: {str(e)}",
+                "local_file": str(report_path),
+                "gitbook_status": "API call failed (report saved locally)"
+            }
         except Exception as e:
             return {
                 "success": False,
