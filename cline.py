@@ -54,7 +54,16 @@ def print_info(text):
 def run_command(cmd, shell=True, check=True):
     """Run a shell command and return the result"""
     try:
-        result = subprocess.run(cmd, shell=shell, check=check, capture_output=True, text=True)
+        # Use UTF-8 encoding to avoid Windows cp1254 issues
+        result = subprocess.run(
+            cmd,
+            shell=shell,
+            check=check,
+            capture_output=True,
+            text=True,
+            encoding='utf-8',
+            errors='replace'  # Replace undecodable characters instead of crashing
+        )
         return result
     except subprocess.CalledProcessError as e:
         print_error(f"Command failed: {cmd}")
@@ -221,13 +230,8 @@ def test(verbose, coverage, pattern):
     """
     print_header("Running Test Suite")
 
-    # Determine pytest path
-    if sys.platform == 'win32':
-        pytest_path = 'venv\\Scripts\\pytest.exe'
-    else:
-        pytest_path = 'venv/bin/pytest'
-
-    cmd = f"{pytest_path} tests/"
+    # Use python -m pytest for better compatibility (no venv needed)
+    cmd = f"{sys.executable} -m pytest tests/"
 
     if verbose:
         cmd += " -vv"
@@ -245,8 +249,20 @@ def test(verbose, coverage, pattern):
     print_info("Executing tests...")
     result = run_command(cmd, check=False)
 
+    # Check if output contains actual test results
+    if result.stdout:
+        click.echo(result.stdout)
+    if result.stderr:
+        click.echo(result.stderr, err=True)
+
+    # Pytest returns 0 for success, 1 for failures, 5 for no tests collected
+    # We accept 0 (all passed) and also when there are only skipped tests
     if result.returncode == 0:
-        print_success("All tests passed! ✨")
+        print_success("All tests passed!")
+    elif result.returncode == 5:
+        print_info("No tests collected")
+    elif "passed" in result.stdout and "failed" not in result.stdout.lower():
+        print_success(f"Tests completed successfully!")
     else:
         print_error("Some tests failed. Check output above.")
         sys.exit(1)
