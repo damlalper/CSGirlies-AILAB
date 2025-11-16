@@ -14,7 +14,7 @@ class Settings(BaseSettings):
 
     # Model selection based on provider
     openai_model: str = "gpt-4-turbo-preview"
-    groq_model: str = "llama3-70b-8192"  # Free and fast! (Groq's model name)
+    groq_model: str = "llama-3.3-70b-versatile"  # Free and fast! (Latest Groq model)
 
     # Wolfram
     wolfram_appid: str = "DEMO"  # Default demo mode
