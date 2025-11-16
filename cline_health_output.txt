@@ -1,0 +1,19 @@
+
+============================================================
+                    System Health Check                     
+============================================================
+
+[INFO] Python version: 3.11.7
+[ERROR] Virtual environment not found (run: python cline.py setup)
+[OK] .env file exists
+[OK] OPENAI_API_KEY configured
+[OK] WOLFRAM_APPID configured
+[OK] GITBOOK_API_KEY configured
+[INFO] Checking Python dependencies...
+[OK] Core dependencies installed
+[OK] Frontend dependencies installed
+
+============================================================
+                   Health Check Complete!                   
+============================================================
+

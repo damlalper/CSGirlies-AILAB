@@ -340,6 +340,133 @@ async def health_check():
     }
 
 
+@app.post("/export/report")
+async def export_report(
+    session_id: str,
+    experiment_id: str,
+    format: str = "pdf"
+):
+    """
+    Export lab report in requested format.
+
+    Formats: pdf, markdown, html, csv, json, all
+    """
+    from src.utils.export import ReportExporter, quick_export_pdf, quick_export_all
+
+    # Get session data
+    if session_id not in active_sessions:
+        raise HTTPException(status_code=404, detail="Session not found")
+
+    session = active_sessions[session_id]
+
+    # Get experiment details
+    experiment = await load_experiment(experiment_id)
+    if not experiment:
+        raise HTTPException(status_code=404, detail="Experiment not found")
+
+    # Prepare report data
+    from src.integrations.gitbook import GitBookIntegration
+    gitbook = GitBookIntegration()
+
+    # Generate markdown content
+    markdown_content = gitbook._generate_markdown_report(
+        session["conversation"],
+        session.get("observations", {}),
+        experiment,
+        session_id
+    )
+
+    # Prepare full data
+    full_data = {
+        "session_id": session_id,
+        "experiment": experiment.dict(),
+        "conversation": session["conversation"],
+        "observations": session.get("observations", {}),
+        "timestamp": session.get("timestamp", "")
+    }
+
+    exporter = ReportExporter()
+
+    try:
+        if format == "all":
+            # Export all formats
+            exports = exporter.export_all_formats(
+                markdown_content,
+                session["conversation"],
+                session.get("observations", {}),
+                full_data,
+                f"{experiment.title.replace(' ', '_')}_{session_id}"
+            )
+            return {
+                "success": True,
+                "message": "Exported in all formats",
+                "files": exports
+            }
+
+        elif format == "pdf":
+            pdf_path = exporter.export_to_pdf(
+                markdown_content,
+                f"{experiment.title.replace(' ', '_')}_{session_id}"
+            )
+            return {
+                "success": True,
+                "format": "pdf",
+                "file_path": pdf_path
+            }
+
+        elif format == "markdown":
+            md_path = exporter.export_to_markdown(
+                markdown_content,
+                f"{experiment.title.replace(' ', '_')}_{session_id}"
+            )
+            return {
+                "success": True,
+                "format": "markdown",
+                "file_path": md_path
+            }
+
+        elif format == "html":
+            html_path = exporter.export_to_html(
+                markdown_content,
+                f"{experiment.title.replace(' ', '_')}_{session_id}"
+            )
+            return {
+                "success": True,
+                "format": "html",
+                "file_path": html_path
+            }
+
+        elif format == "csv":
+            csv_path = exporter.export_to_csv(
+                session["conversation"],
+                session.get("observations", {}),
+                f"{experiment.title.replace(' ', '_')}_{session_id}"
+            )
+            return {
+                "success": True,
+                "format": "csv",
+                "file_path": csv_path
+            }
+
+        elif format == "json":
+            json_path = exporter.export_to_json(
+                full_data,
+                f"{experiment.title.replace(' ', '_')}_{session_id}"
+            )
+            return {
+                "success": True,
+                "format": "json",
+                "file_path": json_path
+            }
+
+        else:
+            raise HTTPException(status_code=400, detail=f"Unsupported format: {format}")
+
+    except Exception as e:
+        logger.error(f"Export error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Export failed: {str(e)}")
+
+
 # Error handlers
 @app.exception_handler(HTTPException)
 async def http_exception_handler(request, exc):

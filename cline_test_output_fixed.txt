@@ -1,0 +1,99 @@
+
+============================================================
+                     Running Test Suite                     
+============================================================
+
+[INFO] Executing tests...
+============================= test session starts =============================
+platform win32 -- Python 3.11.7, pytest-7.4.0, pluggy-1.0.0 -- C:\Users\Lenovo\anaconda3\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\Lenovo\CSGirlies-AILAB
+plugins: anyio-3.7.1
+collecting ... collected 21 items
+
+tests/test_agents.py::test_partner_agent_initialization SKIPPED (asy...) [  4%]
+tests/test_agents.py::test_partner_agent_think SKIPPED (async def fu...) [  9%]
+tests/test_agents.py::test_mentor_agent_initialization SKIPPED (asyn...) [ 14%]
+tests/test_agents.py::test_mentor_agent_think SKIPPED (async def fun...) [ 19%]
+tests/test_agents.py::test_evaluator_agent_initialization SKIPPED (a...) [ 23%]
+tests/test_agents.py::test_agent_conversation_history SKIPPED (async...) [ 28%]
+tests/test_agents.py::test_agent_clear_history SKIPPED (async def fu...) [ 33%]
+tests/test_api.py::test_root_endpoint PASSED                             [ 38%]
+tests/test_api.py::test_health_endpoint PASSED                           [ 42%]
+tests/test_api.py::test_list_experiments PASSED                          [ 47%]
+tests/test_api.py::test_get_experiment_details PASSED                    [ 52%]
+tests/test_api.py::test_get_invalid_experiment PASSED                    [ 57%]
+tests/test_api.py::test_start_experiment PASSED                          [ 61%]
+tests/test_api.py::test_start_invalid_experiment PASSED                  [ 66%]
+tests/test_api.py::test_experiment_workflow PASSED                       [ 71%]
+tests/test_scenarios.py::test_titration_scenario PASSED                  [ 76%]
+tests/test_scenarios.py::test_hookes_law_scenario PASSED                 [ 80%]
+tests/test_scenarios.py::test_osmosis_scenario PASSED                    [ 85%]
+tests/test_scenarios.py::test_scenario_steps PASSED                      [ 90%]
+tests/test_scenarios.py::test_scenario_materials PASSED                  [ 95%]
+tests/test_scenarios.py::test_scenario_safety_notes PASSED               [100%]
+
+============================== warnings summary ===============================
+..\anaconda3\Lib\site-packages\pydantic\_internal\_config.py:267
+  C:\Users\Lenovo\anaconda3\Lib\site-packages\pydantic\_internal\_config.py:267: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.4/migration/
+    warnings.warn(DEPRECATION_MESSAGE, DeprecationWarning)
+
+tests\test_agents.py:6
+  C:\Users\Lenovo\CSGirlies-AILAB\tests\test_agents.py:6: PytestUnknownMarkWarning: Unknown pytest.mark.asyncio - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.asyncio
+
+tests\test_agents.py:14
+  C:\Users\Lenovo\CSGirlies-AILAB\tests\test_agents.py:14: PytestUnknownMarkWarning: Unknown pytest.mark.asyncio - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.asyncio
+
+tests\test_agents.py:27
+  C:\Users\Lenovo\CSGirlies-AILAB\tests\test_agents.py:27: PytestUnknownMarkWarning: Unknown pytest.mark.asyncio - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.asyncio
+
+tests\test_agents.py:34
+  C:\Users\Lenovo\CSGirlies-AILAB\tests\test_agents.py:34: PytestUnknownMarkWarning: Unknown pytest.mark.asyncio - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.asyncio
+
+tests\test_agents.py:50
+  C:\Users\Lenovo\CSGirlies-AILAB\tests\test_agents.py:50: PytestUnknownMarkWarning: Unknown pytest.mark.asyncio - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.asyncio
+
+tests\test_agents.py:57
+  C:\Users\Lenovo\CSGirlies-AILAB\tests\test_agents.py:57: PytestUnknownMarkWarning: Unknown pytest.mark.asyncio - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.asyncio
+
+tests\test_agents.py:72
+  C:\Users\Lenovo\CSGirlies-AILAB\tests\test_agents.py:72: PytestUnknownMarkWarning: Unknown pytest.mark.asyncio - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.asyncio
+
+tests/test_agents.py::test_partner_agent_initialization
+tests/test_agents.py::test_partner_agent_think
+tests/test_agents.py::test_mentor_agent_initialization
+tests/test_agents.py::test_mentor_agent_think
+tests/test_agents.py::test_evaluator_agent_initialization
+tests/test_agents.py::test_agent_conversation_history
+tests/test_agents.py::test_agent_clear_history
+  C:\Users\Lenovo\anaconda3\Lib\site-packages\_pytest\python.py:183: PytestUnhandledCoroutineWarning: async def functions are not natively supported and have been skipped.
+  You need to install a suitable plugin for your async framework, for example:
+    - anyio
+    - pytest-asyncio
+    - pytest-tornasync
+    - pytest-trio
+    - pytest-twisted
+    warnings.warn(PytestUnhandledCoroutineWarning(msg.format(nodeid)))
+
+tests/test_api.py::test_root_endpoint
+tests/test_api.py::test_health_endpoint
+tests/test_api.py::test_list_experiments
+tests/test_api.py::test_get_experiment_details
+tests/test_api.py::test_get_invalid_experiment
+tests/test_api.py::test_start_experiment
+tests/test_api.py::test_start_invalid_experiment
+tests/test_api.py::test_experiment_workflow
+  C:\Users\Lenovo\anaconda3\Lib\site-packages\httpx\_client.py:680: DeprecationWarning: The 'app' shortcut is now deprecated. Use the explicit style 'transport=WSGITransport(app=...)' instead.
+    warnings.warn(message, DeprecationWarning)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+================= 14 passed, 7 skipped, 23 warnings in 6.56s ==================
+
+[OK] All tests passed!

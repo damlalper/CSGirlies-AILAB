@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './App.css';
 import './Theme.css';
+import ExperimentVisuals from './ExperimentVisuals';
 
 function App() {
   const [experiments, setExperiments] = useState([]);
@@ -157,6 +158,31 @@ function App() {
     setProgress(0);
   };
 
+  // Export report
+  const exportReport = async (format) => {
+    if (!sessionId || !selectedExp) return;
+
+    setLoading(true);
+    try {
+      const res = await axios.post(`${API_URL}/export/report`, null, {
+        params: {
+          session_id: sessionId,
+          experiment_id: selectedExp.experiment_id,
+          format: format
+        }
+      });
+
+      if (res.data.success) {
+        alert(`Report exported successfully as ${format.toUpperCase()}!\nFile: ${res.data.file_path || 'Multiple files'}`);
+      }
+    } catch (error) {
+      console.error('Error exporting report:', error);
+      alert('Could not export report. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Tutorial functions
   const tutorialSteps = [
     {
@@ -301,6 +327,13 @@ function App() {
 
           <div className="experiment-content">
             <div className="chat-container">
+              {/* Experiment Visualization */}
+              <ExperimentVisuals
+                experimentId={selectedExp.experiment_id}
+                currentStep={currentStep}
+                progress={progress}
+              />
+
               <div className="messages">
                 {messages.map((msg, idx) => (
                   <div key={idx} className={`message ${msg.role}`}>
@@ -351,14 +384,52 @@ function App() {
                 </ul>
               </div>
 
-              <button 
+              <div className="info-box">
+                <h4><i className="fas fa-download"></i> Export Report</h4>
+                <div style={{ display: 'flex', gap: '5px', flexWrap: 'wrap' }}>
+                  <button
+                    onClick={() => exportReport('pdf')}
+                    className="btn-export"
+                    disabled={loading}
+                    title="Export as PDF"
+                  >
+                    PDF
+                  </button>
+                  <button
+                    onClick={() => exportReport('markdown')}
+                    className="btn-export"
+                    disabled={loading}
+                    title="Export as Markdown"
+                  >
+                    MD
+                  </button>
+                  <button
+                    onClick={() => exportReport('csv')}
+                    className="btn-export"
+                    disabled={loading}
+                    title="Export as CSV"
+                  >
+                    CSV
+                  </button>
+                  <button
+                    onClick={() => exportReport('json')}
+                    className="btn-export"
+                    disabled={loading}
+                    title="Export as JSON"
+                  >
+                    JSON
+                  </button>
+                </div>
+              </div>
+
+              <button
                 onClick={completeExperiment}
                 className="btn-complete"
                 disabled={loading}
               >
                 <i className="fas fa-check-circle"></i> Complete Experiment
               </button>
-              <button 
+              <button
                 onClick={resetApp}
                 className="btn-cancel"
               >

@@ -1,0 +1,19 @@
+Usage: cline.py [OPTIONS] COMMAND [ARGS]...
+
+  CSGirlies-AILAB CLI - AI Lab Partner Automation Tool
+
+  Built with Cline CLI for the CS Girlies Hackathon. Complete automation for
+  development, testing, and deployment.
+
+Options:
+  --version  Show the version and exit.
+  --help     Show this message and exit.
+
+Commands:
+  build-docs  Generate complete documentation and GitBook reports
+  demo        Run interactive demo of the system
+  health      Check system health and configuration
+  package     Package project for hackathon submission
+  setup       Complete project setup - Install all dependencies
+  start       Start backend and frontend servers concurrently
+  test        Run test suite with pytest
