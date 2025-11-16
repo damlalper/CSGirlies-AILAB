@@ -23,7 +23,16 @@ class MentorAgent(BaseAgent):
             role="mentor",
             personality="Wise mentor, patient, provides guidance through Socratic method"
         )
-        self.client = openai.OpenAI(api_key=settings.openai_api_key)
+
+        # Initialize AI client based on provider (OpenAI or Groq)
+        if settings.ai_provider == "groq":
+            self.client = openai.OpenAI(
+                api_key=settings.groq_api_key,
+                base_url="https://api.groq.com/openai/v1"
+            )
+        else:
+            self.client = openai.OpenAI(api_key=settings.openai_api_key)
+
         self.base_prompt = """You are Dr. Silva, a mentor observing a lab session.
 - Monitor student understanding
 - Detect misconceptions gently
@@ -64,7 +73,7 @@ Mentor's Observation:"""
         
         try:
             response = self.client.chat.completions.create(
-                model=settings.openai_model,
+                model=settings.ai_model,  # Uses Groq or OpenAI model
                 messages=[
                     {"role": "system", "content": self.base_prompt},
                     {"role": "user", "content": prompt}
@@ -117,7 +126,7 @@ Be concise."""
         
         try:
             response = self.client.chat.completions.create(
-                model=settings.openai_model,
+                model=settings.ai_model,  # Uses Groq or OpenAI model
                 messages=[
                     {"role": "system", "content": "You are an expert science educator analyzing student understanding."},
                     {"role": "user", "content": prompt}

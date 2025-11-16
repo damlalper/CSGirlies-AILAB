@@ -23,7 +23,15 @@ class EvaluatorAgent(BaseAgent):
             role="evaluator",
             personality="Fair assessor, provides constructive feedback"
         )
-        self.client = openai.OpenAI(api_key=settings.openai_api_key)
+
+        # Initialize AI client based on provider (OpenAI or Groq)
+        if settings.ai_provider == "groq":
+            self.client = openai.OpenAI(
+                api_key=settings.groq_api_key,
+                base_url="https://api.groq.com/openai/v1"
+            )
+        else:
+            self.client = openai.OpenAI(api_key=settings.openai_api_key)
     
     async def think(self, context: Dict[str, Any]) -> str:
         """
@@ -43,7 +51,7 @@ Keep it concise (100 words)."""
         
         try:
             response = self.client.chat.completions.create(
-                model=settings.openai_model,
+                model=settings.ai_model,  # Uses Groq or OpenAI model
                 messages=[
                     {"role": "system", "content": "You provide constructive, encouraging educational feedback."},
                     {"role": "user", "content": prompt}

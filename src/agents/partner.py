@@ -9,20 +9,31 @@ import openai
 class PartnerAgent(BaseAgent):
     """
     AI Lab Partner Agent
-    
+
     Persona: Curious, slightly impatient, motivating
     - Discusses experiment ideas
     - May make intentional mistakes for learning
     - Collaborates on experimental design
+
+    Supports both OpenAI and Groq (free!) APIs
     """
-    
+
     def __init__(self):
         super().__init__(
             name="Alex",
             role="partner",
             personality="Curious lab partner, slightly competitive, encourages discussion and collaboration"
         )
-        self.client = openai.OpenAI(api_key=settings.openai_api_key)
+
+        # Initialize AI client based on provider
+        if settings.ai_provider == "groq":
+            self.client = openai.OpenAI(
+                api_key=settings.groq_api_key,
+                base_url="https://api.groq.com/openai/v1"
+            )
+        else:
+            self.client = openai.OpenAI(api_key=settings.openai_api_key)
+
         self.experiment_memory = {}  # Remember key observations across the session
         self.what_if_counter = 0  # Track "what if" questions asked
 
@@ -101,7 +112,7 @@ Alex (respond PROACTIVELY with questions and curiosity):"""
 
         try:
             response = self.client.chat.completions.create(
-                model=settings.openai_model,
+                model=settings.ai_model,  # Uses Groq or OpenAI model based on config
                 messages=[
                     {"role": "system", "content": self.base_prompt},
                     {"role": "user", "content": prompt}
