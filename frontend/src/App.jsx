@@ -12,8 +12,18 @@ function App() {
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [showTutorial, setShowTutorial] = useState(false);
+  const [tutorialStep, setTutorialStep] = useState(0);
 
   const API_URL = 'http://localhost:8000';
+
+  // Check if first time user
+  useEffect(() => {
+    const hasSeenTutorial = localStorage.getItem('hasSeenTutorial');
+    if (!hasSeenTutorial) {
+      setShowTutorial(true);
+    }
+  }, []);
 
   // Load experiments
   useEffect(() => {
@@ -147,12 +157,114 @@ function App() {
     setProgress(0);
   };
 
+  // Tutorial functions
+  const tutorialSteps = [
+    {
+      title: "Welcome to CSGirlies-AILAB! 🧪",
+      content: "Your AI-powered virtual lab partner that makes science education accessible anywhere, anytime."
+    },
+    {
+      title: "Meet Your AI Lab Partner 🤖",
+      content: "Alex is your curious lab companion who will guide you through experiments, ask proactive questions, and help you discover scientific concepts."
+    },
+    {
+      title: "How It Works 💬",
+      content: "Simply chat with your AI partner! Type your observations, ask questions, and respond naturally. The AI remembers your conversation and adapts to your learning pace."
+    },
+    {
+      title: "Get Real-Time Computations 📊",
+      content: "Powered by Wolfram Alpha, you'll see dynamic graphs, calculations, and scientific visualizations based on your experiment data."
+    },
+    {
+      title: "Ready to Start? 🚀",
+      content: "Select an experiment, start chatting with your AI partner, and experience science like never before!"
+    }
+  ];
+
+  const nextTutorialStep = () => {
+    if (tutorialStep < tutorialSteps.length - 1) {
+      setTutorialStep(tutorialStep + 1);
+    } else {
+      closeTutorial();
+    }
+  };
+
+  const prevTutorialStep = () => {
+    if (tutorialStep > 0) {
+      setTutorialStep(tutorialStep - 1);
+    }
+  };
+
+  const closeTutorial = () => {
+    setShowTutorial(false);
+    localStorage.setItem('hasSeenTutorial', 'true');
+  };
+
+  const skipTutorial = () => {
+    closeTutorial();
+  };
+
   return (
     <div className="App">
       <header className="header">
         <h1>🧪 CSGirlies-AILAB</h1>
         <p>Interactive Experiment Environment Powered by AI</p>
+        <button
+          onClick={() => setShowTutorial(true)}
+          className="btn-tutorial"
+          title="View Tutorial"
+        >
+          ❓ Help
+        </button>
       </header>
+
+      {/* Onboarding Tutorial Modal */}
+      {showTutorial && (
+        <div className="tutorial-overlay">
+          <div className="tutorial-modal">
+            <div className="tutorial-header">
+              <h2>{tutorialSteps[tutorialStep].title}</h2>
+              <button onClick={skipTutorial} className="btn-close">✕</button>
+            </div>
+
+            <div className="tutorial-content">
+              <div className="tutorial-icon">
+                {tutorialStep === 0 && "🧪"}
+                {tutorialStep === 1 && "🤖"}
+                {tutorialStep === 2 && "💬"}
+                {tutorialStep === 3 && "📊"}
+                {tutorialStep === 4 && "🚀"}
+              </div>
+              <p>{tutorialSteps[tutorialStep].content}</p>
+            </div>
+
+            <div className="tutorial-footer">
+              <div className="tutorial-dots">
+                {tutorialSteps.map((_, idx) => (
+                  <span
+                    key={idx}
+                    className={`dot ${idx === tutorialStep ? 'active' : ''}`}
+                  />
+                ))}
+              </div>
+
+              <div className="tutorial-buttons">
+                {tutorialStep > 0 && (
+                  <button onClick={prevTutorialStep} className="btn-secondary">
+                    ← Back
+                  </button>
+                )}
+                <button onClick={skipTutorial} className="btn-secondary">
+                  Skip
+                </button>
+                <button onClick={nextTutorialStep} className="btn-primary">
+                  {tutorialStep === tutorialSteps.length - 1 ? "Get Started!" : "Next →"}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {!selectedExp ? (
         // Experiment Selection Screen
